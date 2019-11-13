@@ -1,4 +1,4 @@
-var TBA = tba("Krm8Gg4CDQHpCk8Dg7pJLXkqP77YQNkauQoawhSE5wZyBfGEb6iltLn7W12c6hWV");
+var TBA = new tba("Krm8Gg4CDQHpCk8Dg7pJLXkqP77YQNkauQoawhSE5wZyBfGEb6iltLn7W12c6hWV");
 
 // Example functions showing how to get lists of teams
 function teamLists () {
@@ -16,12 +16,23 @@ function teamLists () {
     var allTeams = TBA.teams();
     var cachePage3 = TBA.teams(tba.pageNumber(3));
   
-    Logger.log("Total Requests Made: " + TBA.totalRequests());
-    Logger.log("Overall Average Time: " + TBA.averageRequestTime().toFixed(2) + "ms / request");
-    Logger.log("Total Non-Cached Requests Made: " + TBA.nonCachedRequests());
-    Logger.log("Non-Cached Average Time: " + TBA.averageNonCachedRequestTime().toFixed(2) + "ms / request");
-    Logger.log("Total Cached Requests Made: " + TBA.cachedRequests());
-    Logger.log("Cached Average Time: " + TBA.averageCachedRequestTime().toFixed(2) + "ms / request");
+    Logger.log("Total Requests Made: " + TBA.analytics.totalReqs());
+    Logger.log("Overall Average Time: " + TBA.analytics.avgReqTime().toFixed(2) + "ms / request");
+    Logger.log("Total Non-Cached Requests Made: " + TBA.analytics.nonCachedReqs());
+    Logger.log("Non-Cached Average Time: " + TBA.analytics.avgNonCachedReqTime().toFixed(2) + "ms / request");
+    Logger.log("Total Cached Requests Made: " + TBA.analytics.cachedReqs());
+    Logger.log("Cached Average Time: " + TBA.analytics.avgCachedReqTime().toFixed(2) + "ms / request");
+}
+
+function testPagesSpeed () {
+    var start = Date.now();
+    var teams = TBA.teams();
+    Logger.log(teams.length);
+    Logger.log("Took " + (Date.now() - start).toFixed(2) + "ms");
+    start = Date.now();
+    var teams = TBA.teams();
+    Logger.log(teams.length);
+    Logger.log("Took " + (Date.now() - start).toFixed(2) + "ms");
 }
 
 function teamAgesAtEvent () {
