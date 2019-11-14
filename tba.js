@@ -375,6 +375,143 @@ function tba(authKey) {
                 return r;
             }
         },
+      
+        api_status: function (filters_) { 
+        
+        },
+      
+        award: function (filters_) { 
+            // Check all the valid combinations of filters that can result in a list of XXX
+            /* Valid ways to get XXX:
+            No Arguments: None
+            1  Argument: 
+                  team_key
+                  event_key
+            
+            2  Arguments:
+                  team_key, event_key
+                  team_key, year
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.teamKey:
+                    var endpoint = ["team", arguments[0].toString(), "awards"];
+                    return this.apiRequest(endpoint);
+                case tba.eventKey:
+                    var endpoint = ["event", arguments[0], "awards"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected team key or event key";
+                }
+            case 2:
+                var team_key = (arguments[0].type === tba.teamKey ? arguments[0] : arguments[1]);
+                if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
+                
+                var other_key = (arguments[0].type === tba.teamKey ? arguments[1] : arguments[0]);
+                switch (other_key.type) {
+                case tba.eventKey:
+                    var endpoint = ["team", team_key, "event", other_key, "awards"];
+                    return this.apiRequest(endpoint);
+                     
+                  case tba.year:
+                    var endpoint = ["team", team_key, "awards", other_key.toString()];
+                    return this.apiRequest(endpoint);
+                     
+                default:
+                    throw "Expected year or event key"; 
+                }
+                    
+            default:
+                throw "Wrong number of arguments."
+            }        
+        },
+      
+        district_list: function (filters_) { 
+        
+        },
+      
+        district_ranking: function (filters_) { 
+        
+        },
+      
+        elimination_alliance: function (filters_) { 
+        
+        },
+      
+        event: function (filters_) { 
+        
+        },
+      
+        event_district_points: function (filters_) { 
+        
+        },
+      
+        event_insights: function (filters_) { 
+        
+        },
+      
+        event_keys_array: function (filters_) { 
+        
+        },
+      
+        event_oprs: function (filters_) { 
+        
+        },
+      
+        event_predictions: function (filters_) { 
+        
+        },
+      
+        event_ranking: function (filters_) { 
+        
+        },
+      
+        event_simple: function (filters_) { 
+        
+        },
+      
+        match: function (filters_) { 
+        
+        },
+      
+        match_keys_array: function (filters_) { 
+        
+        },
+      
+        match_simple: function (filters_) { 
+        
+        },
+      
+        media: function (filters_) { 
+        
+        },
+      
+        team: function (filters_) { 
+        
+        },
+      
+        team_event_status: function (filters_) { 
+        
+        },
+      
+        team_keys_array: function (filters_) { 
+        
+        },
+      
+        team_robot: function (filters_) { 
+        
+        },
+      
+        team_simple: function (filters_) { 
+        
+        },
+      
+        years_participated_array: function (filters_) { 
+        
+        },
+      
+      
         teams: function (filters_) {
             // Check all the valid combinations of filters that can result in a list of teams
             /* Valid ways to get teams:
