@@ -1182,6 +1182,34 @@ function tba(authKey) {
                 throw "Invalid number of team filters."
             }
         },
+
+        time_series: function (filters_) { 
+            // Check all the valid combinations of filters that can result in a timeseries response
+            /* Valid ways to get a timeseries:
+            No Arguments:
+                    None
+            1  Argument:
+                    team_key
+                    event_key
+            2  Arguments:
+                    None
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.teamKey:
+                    var endpoint = ["event", arguments[0], "matches", "timeseries"];
+                    return this.apiRequest(endpoint);
+                case tba.eventKey:
+                    var endpoint = ["match", arguments[0], "timeseries"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected team key.";
+                }
+            default:
+                throw "Wrong number of arguments."
+            }        
+        },
       
         years_participated_array: function (filters_) { 
             // Check all the valid combinations of filters that can result in a list of years participated

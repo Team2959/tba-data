@@ -1,10 +1,22 @@
 var TBA = new tba("Krm8Gg4CDQHpCk8Dg7pJLXkqP77YQNkauQoawhSE5wZyBfGEb6iltLn7W12c6hWV");
 
 
-
 function testMiranda () {
-  var ourData = TBA.district_ranking(tba.districtKey("2019fim"));
-  Logger.log(ourData);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var testSheet = ss.getSheetByName("Test Output");
+  var ourData = TBA.award(tba.eventKey("2019misjo"));
+  var i = 0;
+  var sheetData = [];
+  for (i=0; i<ourData.length; i++)
+  {
+    sheetData.push([JSON.stringify(ourData[i])]);
+  }
+  
+  testSheet.clear();  // This deletes everything 
+  Logger.log([sheetData]);
+  
+  testSheet.getRange(1,1,ourData.length).setValues(sheetData);
+  
 }  
   
 // Example functions showing how to get lists of teams
