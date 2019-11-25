@@ -377,7 +377,24 @@ function tba(authKey) {
         },
       
         api_status: function (filters_) { 
+            
+            // Check all the valid combinations of filters that can result in api status
+            /* Valid ways to get api status:
+            No Arguments: 
+                    This funtion is called without argument
+            1  Argument:
+                    None
+            2  Arguments:
+                    None
+            */
+            switch (arguments.length) {
+            case 0:
+                    var endpoint = ["status"];
+                    return this.apiRequest(endpoint)
         
+            default:
+                throw "Expected no arguments."
+            } 
         },
       
         award: function (filters_) { 
@@ -423,96 +440,506 @@ function tba(authKey) {
                 }
                     
             default:
-                throw "Wrong number of arguments."
+                throw "Wrong number of arguments.";
             }        
         },
       
         district_list: function (filters_) { 
         
+          // Check all the valid combinations of filters that can result in a list of disticts
+            /* Valid ways to get districts:
+            No Arguments: 
+                    None
+            1  Argument:
+                    year
+                    team_key 
+            
+            2  Arguments:
+                    None
+           
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.year:
+                    var endpoint = ["districts", arguments[0].toString()];
+                    return this.apiRequest(endpoint);
+                case tba.teamKey:
+                    var endpoint = ["team", arguments[0],"districts"];
+                    return [this.apiRequest(endpoint)];
+                default:
+                    throw "Expected year or team key.";
+                }
+                
+            default:
+                throw "Wrong number of arguments.";
+            } 
         },
       
         district_ranking: function (filters_) { 
         
+            // Check all the valid combinations of filters that can result in a list of district rankings
+            /* Valid ways to get district rankings:
+            No Arguments: 
+                    None
+            1  Argument:
+                    district_key
+            2  Arguments:
+                    None
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.districtKey:
+                    var endpoint = ["district", arguments[0], "rankings"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected district key.";
+                }
+            default:
+                throw "Wrong number of arguments";
+            } 
         },
       
         elimination_alliance: function (filters_) { 
-        
+           
+            // Check all the valid combinations of filters that can result in a list of elimination alliance
+            /* Valid ways to get eleimination alliance:
+            No Arguments: 
+                    None
+            1  Argument:
+                    event_key
+            2  Arguments:
+                    None
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.eventKey:
+                    var endpoint = ["event", arguments[0], "alliances"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected event key.";
+                }
+ 
+            default:
+                throw "Wrong number of arguments"
+            } 
         },
       
         event: function (filters_) { 
         
+            // Check all the valid combinations of filters that can result in an event
+            /* Valid ways to get an event:
+            No Arguments: 
+                    None
+            1  Argument:
+                    district_key
+                    event_key
+                    year
+                    team_key
+            2  Arguments:
+                    team_key, year
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.year:
+                    var endpoint = ["events", arguments[0].toString()];
+                    return this.apiRequest(endpoint);    
+                case tba.eventKey:
+                    var endpoint = ["event", arguments[0]];
+                    return this.apiRequest(endpoint);
+                case tba.districtKey:
+                    var endpoint = ["district", arguments[0], "events"];
+                    return this.apiRequest(endpoint);
+                case tba.teamKey:
+                    var endpoint = ["team", arguments[0], "events"];
+                    return [this.apiRequest(endpoint)];
+                default:
+                    throw "Expected district key, event key, year, or team key.";
+                }
+            case 2:
+                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                if (year.type !== tba.year) throw "Invalid set of selectors. Expected a year";
+                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
+    
+                var endpoint = ["team",team_key,"events", year.toString()];
+                return this.apiRequest(endpoint);
+            default:
+                throw "Wrong number of arguments";
+            }  
         },
       
         event_district_points: function (filters_) { 
-        
+                    // Check all the valid combinations of filters that can result in a list of event district points
+            /* Valid ways to get event district points:
+            No Arguments: 
+                    None
+            1  Argument:
+                    event_key
+            2  Arguments:
+                    None
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.eventKey:
+                    var endpoint = ["event", arguments[0], "district_points"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected event key.";
+                }
+
+            default:
+                throw "Wrong number of arguments."
+            } 
         },
       
         event_insights: function (filters_) { 
-        
+            // Check all the valid combinations of filters that can result in a list of event insights
+            /* Valid ways to get event insites:
+            No Arguments:
+                    None
+            1  Argument:
+                    event_key
+            2  Arguments:
+                    None
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.eventKey:
+                    var endpoint = ["event", arguments[0], "insights"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected event key.";
+                }
+            default:
+                throw "Wrong number of arguments."
+            }
         },
       
         event_keys_array: function (filters_) { 
-        
+            // Check all the valid combinations of filters that can result in a list of event keys
+            /* Valid ways to get event keys:
+            No Arguments:
+                    None
+            1  Argument:
+                    district_key
+                    year
+                    team_key
+            2  Arguments:
+                    team_key, year
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.districtKey:
+                    var endpoint = ["district", arguments[0], "events", "keys"];
+                    return this.apiRequest(endpoint);
+                case tba.year:
+                    var endpoint = ["events", arguments[0].toString(), "keys"];
+                    return this.apiRequest(endpoint);
+                case tba.team_key:
+                    var endpoint = ["team", arguments[0], "events", "keys"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected district key, year, or team key.";
+                }
+            case 2:
+                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                if (year.type !== tba.year) throw "Invalid set of selectors. Expected a year";
+                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
+    
+                var endpoint = ["team",team_key,"events", year.toString(), "keys"];
+                return this.apiRequest(endpoint);
+             default:
+                throw "Wrong number of arguments."
+            }        
         },
       
         event_oprs: function (filters_) { 
-        
-        },
+            // Check all the valid combinations of filters that can result in a list of event oprs
+            /* Valid ways to get event oprs:
+            No Arguments:
+                    None
+            1  Argument:
+                    event_key
+            2  Arguments:
+                    None
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.eventKey:
+                    var endpoint = ["event", arguments[0], "oprs"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected event key.";
+                }
+            default:
+                throw "Wrong number of arguments."
+            }
+         },
       
         event_predictions: function (filters_) { 
-        
+            // Check all the valid combinations of filters that can result in a list of event predictions
+            /* Valid ways to get event predictions:
+            No Arguments:
+                    None
+            1  Argument:
+                    event_key
+            2  Arguments:
+                    None
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.eventKey:
+                    var endpoint = ["event", arguments[0], "predictions"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected event key.";
+                }
+            default:
+                throw "Wrong number of arguments."
+            }        
         },
       
         event_ranking: function (filters_) { 
-        
+            // Check all the valid combinations of filters that can result in a list of event rankings
+            /* Valid ways to get event rankings:
+            No Arguments:
+                    None
+            1  Argument:
+                    event_key
+            2  Arguments:
+                    None
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.eventKey:
+                    var endpoint = ["event", arguments[0], "rankings"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected event key.";
+                }
+            default:
+                throw "Wrong number of arguments."
+            }        
         },
       
         event_simple: function (filters_) { 
-        
+            // Check all the valid combinations of filters that can result in a list of events (simple)
+            /* Valid ways to get events (simple):
+            No Arguments:
+                    None
+            1  Argument:
+                    district_key
+                    year
+                    team_key
+                    event_key
+            2  Arguments:
+                    team_key, year
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.districtKey:
+                    var endpoint = ["district", arguments[0], "events", "simple"];
+                    return this.apiRequest(endpoint);
+                case tba.year:
+                    var endpoint = ["events", arguments[0].toString(), "simple"];
+                    return this.apiRequest(endpoint);
+                case tba.team_key:
+                    var endpoint = ["team", arguments[0], "events", "simple"];
+                    return this.apiRequest(endpoint);
+                case tba.eventKey:
+                    var endpoint = ["event", arguments[0], "simple"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected district key, year, team key, or event key.";
+                }
+            case 2:
+                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                if (year.type !== tba.year) throw "Invalid set of selectors. Expected a year";
+                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
+    
+                var endpoint = ["team",team_key,"events", year.toString(), "simple"];
+                return this.apiRequest(endpoint);
+             default:
+                throw "Wrong number of arguments."
+            }        
         },
       
         match: function (filters_) { 
-        
+            // Check all the valid combinations of filters that can result in a list of matches
+            /* Valid ways to get matches:
+            No Arguments:
+                    None
+            1  Argument:
+                    match_key
+                    year
+            2  Arguments:
+                    team_key, event_key
+                    team_key, year
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.matchKey:
+                    var endpoint = ["match", arguments[0]];
+                    return this.apiRequest(endpoint);
+                case tba.year:
+                    var endpoint = ["event", arguments[0].toString(), "matches"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected match key or event key.";
+                }
+            case 2:
+                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
+                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                if (year.type !== tba.year) {
+                  var event_key = (arguments[0].type === tba.eventKey ? arguments[0] : arguments[1]);
+                  if (event_key.type !== tba.eventKey) throw "Invalid set of selectors.  Expected team key and year or event key.";
+                  var endpoint = ["team",team_key,"event", event_key, "matches"];
+                }
+                else {
+                  var endpoint = ["team",team_key,"matches", year.toString()];
+                }
+                return this.apiRequest(endpoint);
+             default:
+                throw "Wrong number of arguments."
+            }        
         },
       
         match_keys_array: function (filters_) { 
-        
+            // Check all the valid combinations of filters that can result in a list of match keys
+            /* Valid ways to get match keys:
+            No Arguments:
+                    None
+            1  Argument:
+                    event_key
+            2  Arguments:
+                    team_key, event_key
+                    team_key, year
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.eventKey:
+                    var endpoint = ["event", arguments[0], "matches", "keys"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected match key or event key.";
+                }
+            case 2:
+                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
+                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                if (year.type !== tba.year) {
+                  var event_key = (arguments[0].type === tba.eventKey ? arguments[0] : arguments[1]);
+                  if (event_key.type !== tba.eventKey) throw "Invalid set of selectors.  Expected team key and year or event key.";
+                  var endpoint = ["team",team_key,"event", event_key, "matches", "keys"];
+                }
+                else {
+                  var endpoint = ["team",team_key,"matches", year.toString(), "keys"];
+                }
+                return this.apiRequest(endpoint);
+             default:
+                throw "Wrong number of arguments."
+            }        
         },
       
         match_simple: function (filters_) { 
-        
+            // Check all the valid combinations of filters that can result in a list of matches (simple)
+            /* Valid ways to get matches (simple):
+            No Arguments:
+                    None
+            1  Argument:
+                    match_key
+                    event_key
+            2  Arguments:
+                    team_key, event_key
+                    team_key, year
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.matchKey:
+                    var endpoint = ["match", arguments[0], "simple"];
+                    return this.apiRequest(endpoint);
+                case tba.event_key:
+                    var endpoint = ["event", arguments[0], "matches", "simple"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected match key or event key.";
+                }
+            case 2:
+                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
+                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                if (year.type !== tba.year) {
+                  var event_key = (arguments[0].type === tba.eventKey ? arguments[0] : arguments[1]);
+                  if (event_key.type !== tba.eventKey) throw "Invalid set of selectors.  Expected team key and year or event key.";
+                  var endpoint = ["team",team_key,"event", event_key, "matches", "simple"];
+                }
+                else {
+                  var endpoint = ["team",team_key,"matches", year.toString(), "simple"];
+                }
+                return this.apiRequest(endpoint);
+             default:
+                throw "Wrong number of arguments."
+            }        
         },
       
         media: function (filters_) { 
-        
+            // Check all the valid combinations of filters that can result in a list of media
+            /* Valid ways to get media:
+            No Arguments:
+                    None
+            1  Argument:
+                    team_key
+            2  Arguments:
+                    team_key, media_tag
+                    team_key, year
+            3  Arguments:
+                    team_key, media_tag, year
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.teamKey:
+                    var endpoint = ["match", arguments[0], "simple"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected match key or event key.";
+                }
+            case 2:
+                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
+                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                if (year.type !== tba.year) {
+                  var media_tag = (arguments[0].type === tba.mediaTag ? arguments[0] : arguments[1]);
+                  if (media_tag.type !== tba.mediaTag) throw "Invalid set of selectors.  Expected team key and year or media tag.";
+                  var endpoint = ["team",team_key,"media", "tag", media_tag];
+                }
+                else {
+                  var endpoint = ["team",team_key,"media", "tag", media_tag, year.toString()];
+                }
+                return this.apiRequest(endpoint);
+             default:
+                throw "Wrong number of arguments."
+            }        
         },
       
         team: function (filters_) { 
-        
-        },
-      
-        team_event_status: function (filters_) { 
-        
-        },
-      
-        team_keys_array: function (filters_) { 
-        
-        },
-      
-        team_robot: function (filters_) { 
-        
-        },
-      
-        team_simple: function (filters_) { 
-        
-        },
-      
-        years_participated_array: function (filters_) { 
-        
-        },
-      
-      
-        teams: function (filters_) {
             // Check all the valid combinations of filters that can result in a list of teams
             /* Valid ways to get teams:
             No Arguments: All pages
@@ -559,7 +986,7 @@ function tba(authKey) {
                     var endpoint = ["team", arguments[0]];
                     return [this.apiRequest(endpoint)];
                 default:
-                    throw "Unknown team filter provided.";
+                    throw "Expected a page number, event key, district key, team key or year.";
                 }
             case 2:
                 var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
@@ -573,10 +1000,218 @@ function tba(authKey) {
                 throw "Invalid number of team filters."
             }
         },
+      
+        team_event_status: function (filters_) { 
+            // Check all the valid combinations of filters that can result in a list of event statuses
+            /* Valid ways to get event statuses:
+            No Arguments:
+                    None
+            1  Argument:
+                    event_key
+            2  Arguments:
+                    team_key, event_key
+                    team_key, year
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.event_key:
+                    var endpoint = ["event", arguments[0], "teams", "statuses"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected event key.";
+                }
+            case 2:
+                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
+                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                if (year.type !== tba.year) {
+                  var event_key = (arguments[0].type === tba.eventKey ? arguments[0] : arguments[1]);
+                  if (event_key.type !== tba.eventKey) throw "Invalid set of selectors.  Expected team key and year or event key.";
+                  var endpoint = ["team",team_key,"event", event_key, "statuses"];
+                }
+                else {
+                  var endpoint = ["team",team_key,"events", year.toString(), "statuses"];
+                }
+                return this.apiRequest(endpoint);
+             default:
+                throw "Wrong number of arguments."
+            }        
+        },
+      
+        team_keys_array: function (filters_) { 
+            // Check all the valid combinations of filters that can result in a list of team keys
+            /* Valid ways to get team keys:
+            No Arguments: All pages
+            1  Argument:
+                page_num
+                event_key,
+                district_key,
+                year, All pages
+            2  Arguments:
+                year, page_num
+            */
+            switch (arguments.length) {
+            case 0:
+                // Select all teams
+                var endpointGen = function (i) {
+                    return ["teams", i.toString(), "keys"];
+                };
+                if (this.teamPageCount !== null) {
+                    return this.getAllPages(endpointGen, this.teamPageCount);
+                } else {
+                    var results = this.getAllPages(endpointGen);
+                    this.teamPageCount = this.pagesReqd;
+                    return results;
+                }
+            case 1:
+                switch (arguments[0].type) {
+                case tba.pageNumber:
+                    var endpoint = ["teams", arguments[0].toString(), "keys"];
+                    return this.apiRequest(endpoint);
+                case tba.year:
+                    var endpointGen = function (year, i) {
+                        return ["teams", year.toString(), i.toString(), "keys"];
+                    }.bind({}, arguments[0]);
+    
+                    return this.getAllPages(endpointGen);
+                case tba.eventKey:
+                    var endpoint = ["event", arguments[0], "teams", "keys"];
+                    return this.apiRequest(endpoint);
+                case tba.districtKey:
+                    var endpoint = ["district", arguments[0], "teams", "keys"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected a district key, event key, page number or year.";
+                }
+            case 2:
+                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                if (year.type !== tba.year) throw "Invalid set of selectors. Expected a year";
+                var page_num = (arguments[1].type === tba.pageNumber ? arguments[1] : arguments[0]);
+                if (page_num.type !== tba.pageNumber) throw "Invalid set of selectors. Expected a page number";
+    
+                var endpoint = ["teams", year.toString(), page_num.toString(), "keys"];
+                return this.apiRequest(endpoint);
+            default:
+                throw "Invalid number of team filters."
+            }
+        },
+      
+        team_robot: function (filters_) { 
+            // Check all the valid combinations of filters that can result in a list of team robots
+            /* Valid ways to get team robots:
+            No Arguments:
+                    None
+            1  Argument:
+                    team_key
+            2  Arguments:
+                    None
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.teamKey:
+                    var endpoint = ["team", arguments[0], "robots"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected team key.";
+                }
+            default:
+                throw "Wrong number of arguments."
+            }        
+        },
+      
+        team_simple: function (filters_) { 
+            // Check all the valid combinations of filters that can result in a list of teams (simple)
+            /* Valid ways to get teams (simple):
+            No Arguments: All pages
+            1  Argument:
+                page_num
+                event_key,
+                district_key,
+                team_key
+                year, All pages
+            2  Arguments:
+                year, page_num
+            */
+            switch (arguments.length) {
+            case 0:
+                // Select all teams
+                var endpointGen = function (i) {
+                    return ["teams", i.toString(), "simple"];
+                };
+                if (this.teamPageCount !== null) {
+                    return this.getAllPages(endpointGen, this.teamPageCount);
+                } else {
+                    var results = this.getAllPages(endpointGen);
+                    this.teamPageCount = this.pagesReqd;
+                    return results;
+                }
+            case 1:
+                switch (arguments[0].type) {
+                case tba.pageNumber:
+                    var endpoint = ["teams", arguments[0].toString(), "simple"];
+                    return this.apiRequest(endpoint);
+                case tba.year:
+                    var endpointGen = function (year, i) {
+                        return ["teams", year.toString(), i.toString(), "simple"];
+                    }.bind({}, arguments[0]);
+    
+                    return this.getAllPages(endpointGen);
+                case tba.eventKey:
+                    var endpoint = ["event", arguments[0], "teams", "simple"];
+                    return this.apiRequest(endpoint);
+                case tba.districtKey:
+                    var endpoint = ["district", arguments[0], "teams", "simple"];
+                    return this.apiRequest(endpoint);
+                case tba.teamKey:
+                    var endpoint = ["team", arguments[0], "simple"];
+                    return [this.apiRequest(endpoint)];
+                default:
+                    throw "Expected a page number, event key, district key, team key or year.";
+                }
+            case 2:
+                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                if (year.type !== tba.year) throw "Invalid set of selectors. Expected a year";
+                var page_num = (arguments[1].type === tba.pageNumber ? arguments[1] : arguments[0]);
+                if (page_num.type !== tba.pageNumber) throw "Invalid set of selectors. Expected a page number";
+    
+                var endpoint = ["teams", year.toString(), page_num.toString(), "simple"];
+                return this.apiRequest(endpoint);
+            default:
+                throw "Invalid number of team filters."
+            }
+        },
+      
+        years_participated_array: function (filters_) { 
+            // Check all the valid combinations of filters that can result in a list of years participated
+            /* Valid ways to get years participated:
+            No Arguments:
+                    None
+            1  Argument:
+                    team_key
+            2  Arguments:
+                    None
+            */
+            switch (arguments.length) {
+            case 1:
+                switch (arguments[0].type) {
+                case tba.teamKey:
+                    var endpoint = ["team", arguments[0], "years_participated"];
+                    return this.apiRequest(endpoint);
+                default:
+                    throw "Expected team key.";
+                }
+            default:
+                throw "Wrong number of arguments."
+            }        
+        },
+      
+      
         /************************************************************************************************
          * TODO: implement `events`                                                                     *
          ************************************************************************************************/
-        events: function (filters_) {
+//        events: function (filters_) {
             /* 
             Find all of the different ways a list of events can be generates.
             Determine which is being used based on the number and type of inputs.
@@ -600,7 +1235,7 @@ function tba(authKey) {
                 year, team_key
             */
            
-            if (arguments.length === 1) {
+/*            if (arguments.length === 1) {
                 switch (arguments[0].type) {
                 case tba.year:
                     var endpoint = ["events", arguments[0].toString()].join("/");
@@ -642,11 +1277,13 @@ function tba(authKey) {
             }
           
         },
+        
+        */
         /************************************************************************************************
          * TODO: implement `event`                                                                      *
          ************************************************************************************************/
-        event: function (key) {
-            /*
+    /*    event: function (key) {
+            
             Find all of the data that can be returned about an event, 
             probably in the form `event/EVENT_KEY/...`.
             Return an object with one element for each separate endpoint with event data.
@@ -662,12 +1299,18 @@ function tba(authKey) {
                 }.bind(this, key),
                 ...
             }
-            */
-        },
+            
+        }, */
+      
+      /*
         matches: function (filters_) {
         
         },
-        team: function (key) {
+        
+        */
+      
+      
+      /* team: function (key) {
             if (key.type !== tba.teamKey) throw "Expected a team key.";
     
             return {
@@ -751,12 +1394,12 @@ function tba(authKey) {
                 "mediaByTag": function (key, media) {
     
                 }.bind(this, key),
-                "mediaByTagInYear": function (key, media, year) {}.bind(this, key),*/
+                "mediaByTagInYear": function (key, media, year) {}.bind(this, key),
                 "socialMedia": function (key) {
                     return this.apiRequest(["team", key, "social_media"].join("/"));
                 }.bind(this, key)
             }
-        }
+        } */
     };
 
     for (var funcName in selfFns) {

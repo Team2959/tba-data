@@ -1,5 +1,12 @@
 var TBA = new tba("Krm8Gg4CDQHpCk8Dg7pJLXkqP77YQNkauQoawhSE5wZyBfGEb6iltLn7W12c6hWV");
 
+
+
+function testMiranda () {
+  var ourData = TBA.district_ranking(tba.districtKey("2019fim"));
+  Logger.log(ourData);
+}  
+  
 // Example functions showing how to get lists of teams
 function teamLists () {
     // Returns all teams on "page" 3
@@ -53,4 +60,17 @@ function teamAgesAtEvent () {
     chartBuilder.setChartType(Charts.ChartType.HISTOGRAM);
     chartBuilder.setOption("historgram.bucketSize", 2);
     sheet.insertChart(chartBuilder.build());
+}
+
+function testArgSort() {
+  var x = function (args_) {
+    Logger.log(arguments);
+    arguments.sort(function (a, b) { 
+      if (a.type.name < b.type.name) return -1;
+      if (b.type.name < a.type.name) return 1;
+      return 0;
+    });
+    Logger.log(arguments);
+  };
+  x(tba.year(1996), tba.eventKey("2959frc"));
 }
