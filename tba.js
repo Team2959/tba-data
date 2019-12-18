@@ -125,6 +125,17 @@ Array.prototype.insertAfter = function (i, v) {
     return i;
 }
 
+function clearNulls(inputArray) {
+  for (i = inputArray.length - 1; i>=0; i--)
+  {
+    if (inputArray[i] === null)
+    {
+      inputArray.splice(i,1);
+    }
+  }
+  return (inputArray);
+}
+
 // In the google app script version of javascript there are no direct classes.
 // To create a class a new object needs to be created with class members as elements 
 // Member functions of the class are elements of the "class" object with their scope set to the object
@@ -225,6 +236,10 @@ function tba(authKey) {
                     var obj = JSON.parse(response.getContentText());
                 } catch (ex) {
                     throw "The server returned invalid JSON. " + ex;
+                }
+
+                if (!Array.isArray(obj)) {
+                    obj = [obj];
                 }
     
                 // The response is valid JSON it can be stored in the cache
@@ -409,23 +424,24 @@ function tba(authKey) {
                   team_key, event_key
                   team_key, year
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.teamKey:
-                    var endpoint = ["team", arguments[0].toString(), "awards"];
+                    var endpoint = ["team", args[0].toString(), "awards"];
                     return this.apiRequest(endpoint);
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0], "awards"];
+                    var endpoint = ["event", args[0], "awards"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected team key or event key";
                 }
             case 2:
-                var team_key = (arguments[0].type === tba.teamKey ? arguments[0] : arguments[1]);
+                var team_key = (args[0].type === tba.teamKey ? args[0] : args[1]);
                 if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
                 
-                var other_key = (arguments[0].type === tba.teamKey ? arguments[1] : arguments[0]);
+                var other_key = (args[0].type === tba.teamKey ? args[1] : args[0]);
                 switch (other_key.type) {
                 case tba.eventKey:
                     var endpoint = ["team", team_key, "event", other_key, "awards"];
@@ -458,15 +474,16 @@ function tba(authKey) {
                     None
            
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.year:
-                    var endpoint = ["districts", arguments[0].toString()];
+                    var endpoint = ["districts", args[0].toString()];
                     return this.apiRequest(endpoint);
                 case tba.teamKey:
-                    var endpoint = ["team", arguments[0],"districts"];
-                    return [this.apiRequest(endpoint)];
+                    var endpoint = ["team", args[0],"districts"];
+                    return this.apiRequest(endpoint);
                 default:
                     throw "Expected year or team key.";
                 }
@@ -487,11 +504,12 @@ function tba(authKey) {
             2  Arguments:
                     None
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.districtKey:
-                    var endpoint = ["district", arguments[0], "rankings"];
+                    var endpoint = ["district", args[0], "rankings"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected district key.";
@@ -512,11 +530,12 @@ function tba(authKey) {
             2  Arguments:
                     None
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0], "alliances"];
+                    var endpoint = ["event", args[0], "alliances"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected event key.";
@@ -541,28 +560,29 @@ function tba(authKey) {
             2  Arguments:
                     team_key, year
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.year:
-                    var endpoint = ["events", arguments[0].toString()];
+                    var endpoint = ["events", args[0].toString()];
                     return this.apiRequest(endpoint);    
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0]];
+                    var endpoint = ["event", args[0]];
                     return this.apiRequest(endpoint);
                 case tba.districtKey:
-                    var endpoint = ["district", arguments[0], "events"];
+                    var endpoint = ["district", args[0], "events"];
                     return this.apiRequest(endpoint);
                 case tba.teamKey:
-                    var endpoint = ["team", arguments[0], "events"];
-                    return [this.apiRequest(endpoint)];
+                    var endpoint = ["team", args[0], "events"];
+                    return this.apiRequest(endpoint);
                 default:
                     throw "Expected district key, event key, year, or team key.";
                 }
             case 2:
-                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                var year = (args[0].type === tba.year ? args[0] : args[1]);
                 if (year.type !== tba.year) throw "Invalid set of selectors. Expected a year";
-                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                var team_key = (args[1].type === tba.teamKey ? args[1] : args[0]);
                 if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
     
                 var endpoint = ["team",team_key,"events", year.toString()];
@@ -582,11 +602,12 @@ function tba(authKey) {
             2  Arguments:
                     None
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0], "district_points"];
+                    var endpoint = ["event", args[0], "district_points"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected event key.";
@@ -607,11 +628,12 @@ function tba(authKey) {
             2  Arguments:
                     None
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0], "insights"];
+                    var endpoint = ["event", args[0], "insights"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected event key.";
@@ -633,25 +655,26 @@ function tba(authKey) {
             2  Arguments:
                     team_key, year
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.districtKey:
-                    var endpoint = ["district", arguments[0], "events", "keys"];
+                    var endpoint = ["district", args[0], "events", "keys"];
                     return this.apiRequest(endpoint);
                 case tba.year:
-                    var endpoint = ["events", arguments[0].toString(), "keys"];
+                    var endpoint = ["events", args[0].toString(), "keys"];
                     return this.apiRequest(endpoint);
                 case tba.team_key:
-                    var endpoint = ["team", arguments[0], "events", "keys"];
+                    var endpoint = ["team", args[0], "events", "keys"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected district key, year, or team key.";
                 }
             case 2:
-                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                var year = (args[0].type === tba.year ? args[0] : args[1]);
                 if (year.type !== tba.year) throw "Invalid set of selectors. Expected a year";
-                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                var team_key = (args[1].type === tba.teamKey ? args[1] : args[0]);
                 if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
     
                 var endpoint = ["team",team_key,"events", year.toString(), "keys"];
@@ -671,11 +694,12 @@ function tba(authKey) {
             2  Arguments:
                     None
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0], "oprs"];
+                    var endpoint = ["event", args[0], "oprs"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected event key.";
@@ -683,7 +707,7 @@ function tba(authKey) {
             default:
                 throw "Wrong number of arguments."
             }
-         },
+        },
       
         event_predictions: function (filters_) { 
             // Check all the valid combinations of filters that can result in a list of event predictions
@@ -695,11 +719,12 @@ function tba(authKey) {
             2  Arguments:
                     None
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0], "predictions"];
+                    var endpoint = ["event", args[0], "predictions"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected event key.";
@@ -719,11 +744,12 @@ function tba(authKey) {
             2  Arguments:
                     None
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0], "rankings"];
+                    var endpoint = ["event", args[0], "rankings"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected event key.";
@@ -746,28 +772,29 @@ function tba(authKey) {
             2  Arguments:
                     team_key, year
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.districtKey:
-                    var endpoint = ["district", arguments[0], "events", "simple"];
+                    var endpoint = ["district", args[0], "events", "simple"];
                     return this.apiRequest(endpoint);
                 case tba.year:
-                    var endpoint = ["events", arguments[0].toString(), "simple"];
+                    var endpoint = ["events", args[0].toString(), "simple"];
                     return this.apiRequest(endpoint);
                 case tba.team_key:
-                    var endpoint = ["team", arguments[0], "events", "simple"];
+                    var endpoint = ["team", args[0], "events", "simple"];
                     return this.apiRequest(endpoint);
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0], "simple"];
+                    var endpoint = ["event", args[0], "simple"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected district key, year, team key, or event key.";
                 }
             case 2:
-                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                var year = (args[0].type === tba.year ? args[0] : args[1]);
                 if (year.type !== tba.year) throw "Invalid set of selectors. Expected a year";
-                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                var team_key = (args[1].type === tba.teamKey ? args[1] : args[0]);
                 if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
     
                 var endpoint = ["team",team_key,"events", year.toString(), "simple"];
@@ -789,24 +816,25 @@ function tba(authKey) {
                     team_key, event_key
                     team_key, year
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.matchKey:
-                    var endpoint = ["match", arguments[0]];
+                    var endpoint = ["match", args[0]];
                     return this.apiRequest(endpoint);
                 case tba.year:
-                    var endpoint = ["event", arguments[0].toString(), "matches"];
+                    var endpoint = ["event", args[0].toString(), "matches"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected match key or event key.";
                 }
             case 2:
-                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                var team_key = (args[1].type === tba.teamKey ? args[1] : args[0]);
                 if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
-                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                var year = (args[0].type === tba.year ? args[0] : args[1]);
                 if (year.type !== tba.year) {
-                  var event_key = (arguments[0].type === tba.eventKey ? arguments[0] : arguments[1]);
+                  var event_key = (args[0].type === tba.eventKey ? args[0] : args[1]);
                   if (event_key.type !== tba.eventKey) throw "Invalid set of selectors.  Expected team key and year or event key.";
                   var endpoint = ["team",team_key,"event", event_key, "matches"];
                 }
@@ -830,21 +858,22 @@ function tba(authKey) {
                     team_key, event_key
                     team_key, year
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0], "matches", "keys"];
+                    var endpoint = ["event", args[0], "matches", "keys"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected match key or event key.";
                 }
             case 2:
-                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                var team_key = (args[1].type === tba.teamKey ? args[1] : args[0]);
                 if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
-                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                var year = (args[0].type === tba.year ? args[0] : args[1]);
                 if (year.type !== tba.year) {
-                  var event_key = (arguments[0].type === tba.eventKey ? arguments[0] : arguments[1]);
+                  var event_key = (args[0].type === tba.eventKey ? args[0] : args[1]);
                   if (event_key.type !== tba.eventKey) throw "Invalid set of selectors.  Expected team key and year or event key.";
                   var endpoint = ["team",team_key,"event", event_key, "matches", "keys"];
                 }
@@ -869,24 +898,25 @@ function tba(authKey) {
                     team_key, event_key
                     team_key, year
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.matchKey:
-                    var endpoint = ["match", arguments[0], "simple"];
+                    var endpoint = ["match", args[0], "simple"];
                     return this.apiRequest(endpoint);
                 case tba.event_key:
-                    var endpoint = ["event", arguments[0], "matches", "simple"];
+                    var endpoint = ["event", args[0], "matches", "simple"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected match key or event key.";
                 }
             case 2:
-                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                var team_key = (args[1].type === tba.teamKey ? args[1] : args[0]);
                 if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
-                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                var year = (args[0].type === tba.year ? args[0] : args[1]);
                 if (year.type !== tba.year) {
-                  var event_key = (arguments[0].type === tba.eventKey ? arguments[0] : arguments[1]);
+                  var event_key = (args[0].type === tba.eventKey ? args[0] : args[1]);
                   if (event_key.type !== tba.eventKey) throw "Invalid set of selectors.  Expected team key and year or event key.";
                   var endpoint = ["team",team_key,"event", event_key, "matches", "simple"];
                 }
@@ -912,21 +942,22 @@ function tba(authKey) {
             3  Arguments:
                     team_key, media_tag, year
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.teamKey:
-                    var endpoint = ["match", arguments[0], "simple"];
+                    var endpoint = ["match", args[0], "simple"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected match key or event key.";
                 }
             case 2:
-                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                var team_key = (args[1].type === tba.teamKey ? args[1] : args[0]);
                 if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
-                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                var year = (args[0].type === tba.year ? args[0] : args[1]);
                 if (year.type !== tba.year) {
-                  var media_tag = (arguments[0].type === tba.mediaTag ? arguments[0] : arguments[1]);
+                  var media_tag = (args[0].type === tba.mediaTag ? args[0] : args[1]);
                   if (media_tag.type !== tba.mediaTag) throw "Invalid set of selectors.  Expected team key and year or media tag.";
                   var endpoint = ["team",team_key,"media", "tag", media_tag];
                 }
@@ -952,7 +983,8 @@ function tba(authKey) {
             2  Arguments:
                 year, page_num
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 0:
                 // Select all teams
                 var endpointGen = function (i) {
@@ -966,32 +998,32 @@ function tba(authKey) {
                     return results;
                 }
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.pageNumber:
-                    var endpoint = ["teams", arguments[0].toString()];
+                    var endpoint = ["teams", args[0].toString()];
                     return this.apiRequest(endpoint);
                 case tba.year:
                     var endpointGen = function (year, i) {
                         return ["teams", year.toString(), i.toString()];
-                    }.bind({}, arguments[0]);
+                    }.bind({}, args[0]);
     
                     return this.getAllPages(endpointGen);
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0], "teams"];
+                    var endpoint = ["event", args[0], "teams"];
                     return this.apiRequest(endpoint);
                 case tba.districtKey:
-                    var endpoint = ["district", arguments[0], "teams"];
+                    var endpoint = ["district", args[0], "teams"];
                     return this.apiRequest(endpoint);
                 case tba.teamKey:
-                    var endpoint = ["team", arguments[0]];
-                    return [this.apiRequest(endpoint)];
+                    var endpoint = ["team", args[0]];
+                    return this.apiRequest(endpoint);
                 default:
                     throw "Expected a page number, event key, district key, team key or year.";
                 }
             case 2:
-                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                var year = (args[0].type === tba.year ? args[0] : args[1]);
                 if (year.type !== tba.year) throw "Invalid set of selectors. Expected a year";
-                var page_num = (arguments[1].type === tba.pageNumber ? arguments[1] : arguments[0]);
+                var page_num = (args[1].type === tba.pageNumber ? args[1] : args[0]);
                 if (page_num.type !== tba.pageNumber) throw "Invalid set of selectors. Expected a page number";
     
                 var endpoint = ["teams", year.toString(), page_num.toString()];
@@ -1012,21 +1044,22 @@ function tba(authKey) {
                     team_key, event_key
                     team_key, year
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
-                case tba.event_key:
-                    var endpoint = ["event", arguments[0], "teams", "statuses"];
+                switch (args[0].type) {
+                case tba.eventKey:
+                    var endpoint = ["event", args[0], "teams", "statuses"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected event key.";
                 }
             case 2:
-                var team_key = (arguments[1].type === tba.teamKey ? arguments[1] : arguments[0]);
+                var team_key = (args[1].type === tba.teamKey ? args[1] : args[0]);
                 if (team_key.type !== tba.teamKey) throw "Invalid set of selectors. Expected a team key";
-                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                var year = (args[0].type === tba.year ? args[0] : args[1]);
                 if (year.type !== tba.year) {
-                  var event_key = (arguments[0].type === tba.eventKey ? arguments[0] : arguments[1]);
+                  var event_key = (args[0].type === tba.eventKey ? args[0] : args[1]);
                   if (event_key.type !== tba.eventKey) throw "Invalid set of selectors.  Expected team key and year or event key.";
                   var endpoint = ["team",team_key,"event", event_key, "statuses"];
                 }
@@ -1051,7 +1084,8 @@ function tba(authKey) {
             2  Arguments:
                 year, page_num
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 0:
                 // Select all teams
                 var endpointGen = function (i) {
@@ -1065,29 +1099,29 @@ function tba(authKey) {
                     return results;
                 }
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.pageNumber:
-                    var endpoint = ["teams", arguments[0].toString(), "keys"];
+                    var endpoint = ["teams", args[0].toString(), "keys"];
                     return this.apiRequest(endpoint);
                 case tba.year:
                     var endpointGen = function (year, i) {
                         return ["teams", year.toString(), i.toString(), "keys"];
-                    }.bind({}, arguments[0]);
+                    }.bind({}, args[0]);
     
                     return this.getAllPages(endpointGen);
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0], "teams", "keys"];
+                    var endpoint = ["event", args[0], "teams", "keys"];
                     return this.apiRequest(endpoint);
                 case tba.districtKey:
-                    var endpoint = ["district", arguments[0], "teams", "keys"];
+                    var endpoint = ["district", args[0], "teams", "keys"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected a district key, event key, page number or year.";
                 }
             case 2:
-                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                var year = (args[0].type === tba.year ? args[0] : args[1]);
                 if (year.type !== tba.year) throw "Invalid set of selectors. Expected a year";
-                var page_num = (arguments[1].type === tba.pageNumber ? arguments[1] : arguments[0]);
+                var page_num = (args[1].type === tba.pageNumber ? args[1] : args[0]);
                 if (page_num.type !== tba.pageNumber) throw "Invalid set of selectors. Expected a page number";
     
                 var endpoint = ["teams", year.toString(), page_num.toString(), "keys"];
@@ -1107,11 +1141,12 @@ function tba(authKey) {
             2  Arguments:
                     None
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.teamKey:
-                    var endpoint = ["team", arguments[0], "robots"];
+                    var endpoint = ["team", args[0], "robots"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected team key.";
@@ -1134,7 +1169,8 @@ function tba(authKey) {
             2  Arguments:
                 year, page_num
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 0:
                 // Select all teams
                 var endpointGen = function (i) {
@@ -1148,32 +1184,32 @@ function tba(authKey) {
                     return results;
                 }
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.pageNumber:
-                    var endpoint = ["teams", arguments[0].toString(), "simple"];
+                    var endpoint = ["teams", args[0].toString(), "simple"];
                     return this.apiRequest(endpoint);
                 case tba.year:
                     var endpointGen = function (year, i) {
                         return ["teams", year.toString(), i.toString(), "simple"];
-                    }.bind({}, arguments[0]);
+                    }.bind({}, args[0]);
     
                     return this.getAllPages(endpointGen);
                 case tba.eventKey:
-                    var endpoint = ["event", arguments[0], "teams", "simple"];
+                    var endpoint = ["event", args[0], "teams", "simple"];
                     return this.apiRequest(endpoint);
                 case tba.districtKey:
-                    var endpoint = ["district", arguments[0], "teams", "simple"];
+                    var endpoint = ["district", args[0], "teams", "simple"];
                     return this.apiRequest(endpoint);
                 case tba.teamKey:
-                    var endpoint = ["team", arguments[0], "simple"];
-                    return [this.apiRequest(endpoint)];
+                    var endpoint = ["team", args[0], "simple"];
+                    return this.apiRequest(endpoint);
                 default:
                     throw "Expected a page number, event key, district key, team key or year.";
                 }
             case 2:
-                var year = (arguments[0].type === tba.year ? arguments[0] : arguments[1]);
+                var year = (args[0].type === tba.year ? args[0] : args[1]);
                 if (year.type !== tba.year) throw "Invalid set of selectors. Expected a year";
-                var page_num = (arguments[1].type === tba.pageNumber ? arguments[1] : arguments[0]);
+                var page_num = (args[1].type === tba.pageNumber ? args[1] : args[0]);
                 if (page_num.type !== tba.pageNumber) throw "Invalid set of selectors. Expected a page number";
     
                 var endpoint = ["teams", year.toString(), page_num.toString(), "simple"];
@@ -1183,25 +1219,22 @@ function tba(authKey) {
             }
         },
 
-        time_series: function (filters_) { 
-            // Check all the valid combinations of filters that can result in a timeseries response
-            /* Valid ways to get a timeseries:
+        years_participated_array: function (filters_) { 
+            // Check all the valid combinations of filters that can result in a list of years participated
+            /* Valid ways to get years participated:
             No Arguments:
                     None
             1  Argument:
                     team_key
-                    event_key
             2  Arguments:
                     None
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.teamKey:
-                    var endpoint = ["event", arguments[0], "matches", "timeseries"];
-                    return this.apiRequest(endpoint);
-                case tba.eventKey:
-                    var endpoint = ["match", arguments[0], "timeseries"];
+                    var endpoint = ["team", args[0], "years_participated"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected team key.";
@@ -1221,11 +1254,12 @@ function tba(authKey) {
             2  Arguments:
                     None
             */
-            switch (arguments.length) {
+            var args = clearNulls(Array.prototype.slice.call(arguments));
+            switch (args.length) {
             case 1:
-                switch (arguments[0].type) {
+                switch (args[0].type) {
                 case tba.teamKey:
-                    var endpoint = ["team", arguments[0], "years_participated"];
+                    var endpoint = ["team", args[0], "years_participated"];
                     return this.apiRequest(endpoint);
                 default:
                     throw "Expected team key.";
@@ -1234,200 +1268,6 @@ function tba(authKey) {
                 throw "Wrong number of arguments."
             }        
         },
-      
-      
-        /************************************************************************************************
-         * TODO: implement `events`                                                                     *
-         ************************************************************************************************/
-//        events: function (filters_) {
-            /* 
-            Find all of the different ways a list of events can be generates.
-            Determine which is being used based on the number and type of inputs.
-            For enpoints that require a page number, an option should be available 
-            without the page number which gets all pages
-            
-            Making requests should be done by calling this.apiRequest with the provided endpoint url path
-            Requesting and concatenating all pages can be done by calling this.getAllPages
-            getAllPages accepts a function as it's argument which when called with a provided page number
-            should return a url path
-            */
-            // Check all the valid combinations of filters that can result in a list of events
-            /* Valid ways to get events:
-            No Arguments: Does not apply
-            1  Argument:
-                event_key,
-                district_key,
-                team_key
-                year
-            2  Arguments:
-                year, team_key
-            */
-           
-/*            if (arguments.length === 1) {
-                switch (arguments[0].type) {
-                case tba.year:
-                    var endpoint = ["events", arguments[0].toString()].join("/");
-                    return this.apiRequest(endpoint);
-                case tba.eventKey:
-                    var endpoint = ["event", arguments[0]].join("/");
-                    return this.apiRequest(endpoint);
-                case tba.districtKey:
-                    var endpoint = ["district", arguments[0], "events"].join("/");
-                    return this.apiRequest(endpoint);
-                case tba.teamKey:
-                    var endpoint = ["team", arguments[0], "events"].join("/");
-                    return [this.apiRequest(endpoint)];
-                default:
-                    throw "Unknown event filter provided.";
-                }
-            } else if (arguments.length == 2) {
-                var year = null, team_key = null;
-                if (arguments[0].type === tba.year) {
-                    year = arguments[0];  
-                } else if (arguments[1].type === tba.year) {
-                    year = arguments[1]; 
-                }
-                
-                if (arguments[0].type === tba.teamKey) {
-                    team_key = arguments[0];
-                } else if (arguments[1].type === tba.teamKey) {
-                    team_key = arguments[1]; 
-                }
-                
-                if (year === null || team_key === null) {
-                    throw "Wrong type of arguments."; 
-                }   
-    
-                var endpoint = ["team", team_key,"events", year.toString()].join("/");
-                return this.apiRequest(endpoint);
-            } else {
-                throw "Wrong number of arguments.";
-            }
-          
-        },
-        
-        */
-        /************************************************************************************************
-         * TODO: implement `event`                                                                      *
-         ************************************************************************************************/
-    /*    event: function (key) {
-            
-            Find all of the data that can be returned about an event, 
-            probably in the form `event/EVENT_KEY/...`.
-            Return an object with one element for each separate endpoint with event data.
-            Each element will be a function that accepts the necessary arguments for the endpoint
-            and return the result of the api call.
-            
-            
-            The object will be in the form:
-            return {
-                "NAME_OF_FUNCTION": function (NECESSARY_ARGUMENTS) {
-                    // Validate the type of the necessary argument if any exist
-                    return this.apiRequest(API_ENDPOINT_PATH);
-                }.bind(this, key),
-                ...
-            }
-            
-        }, */
-      
-      /*
-        matches: function (filters_) {
-        
-        },
-        
-        */
-      
-      
-      /* team: function (key) {
-            if (key.type !== tba.teamKey) throw "Expected a team key.";
-    
-            return {
-                "yearsParticipated": function (key) {
-                    return this.apiRequest(["team", key, "years_participated"].join("/"));
-                }.bind(this, key),
-                "districts": function (key) {
-                    return this.apiRequest(["team", key, "districts"].join("/"));
-                }.bind(this, key),
-                "robots": function (key) {
-                    return this.apiRequest(["team", key, "robots"].join("/"));
-                }.bind(this, key),
-                "events": function (key) {
-                    return this.apiRequest(["team", key, "events"].join("/"));
-                }.bind(this, key),
-                "simpleEvents": function (key) {
-                    return this.apiRequest(["team", key, "events", "simple"].join("/"));
-                }.bind(this, key),
-                "eventKeys": function (key) {
-                    return this.apiRequest(["team", key, "events", "keys"].join("/"));
-                }.bind(this, key),
-                "eventsInYear": function (key, year) {
-                    if (year.constructor !== tba.year) throw "Expected a year.";
-                    return this.apiRequest(["team", key, "events", year.toString()].join("/"));
-                }.bind(this, key),
-                "simpleEventsInYear": function (key, year) {
-                    if (year.type !== tba.year) throw "Expected a year.";
-                    return this.apiRequest(["team", key, "events", year.toString(), "simple"].join("/"));
-                }.bind(this, key),
-                "eventKeysInYear": function (key, year) {
-                    if (year.type !== tba.year) throw "Expected a year.";
-                    return this.apiRequest(["team", key, "events", year.toString(), "keys"].join("/"));
-                }.bind(this, key),
-                "eventStatusesInYear": function (key, year) {
-                    if (year.type !== tba.year) throw "Expected a year.";
-                    return this.apiRequest(["team", key, "events", year.toString(), "statuses"].join("/"));
-                }.bind(this, key),
-                "eventMatches": function (key, event) {
-                    if (event.type !== tba.eventKey) throw "Expected an event key.";
-                    return this.apiRequest(["team", key, "event", event, "matches"].join("/"));
-                }.bind(this, key),
-                "eventSimpleMatches": function (key, event) {
-                    if (event.type !== tba.eventKey) throw "Expected an event key.";
-                    return this.apiRequest(["team", key, "event", event, "matches", "simple"].join("/"));
-                }.bind(this, key),
-                "eventMatchKeys": function (key, event) {
-                    if (event.type !== tba.eventKey) throw "Expected an event key.";
-                    return this.apiRequest(["team", key, "event", event, "matches", "keys"].join("/"));
-                }.bind(this, key),
-                "eventAwards": function (key, event) {
-                    if (event.type !== tba.eventKey) throw "Expected an event key.";
-                    return this.apiRequest(["team", key, "event", event, "awards"].join("/"));
-                }.bind(this, key),
-                "eventStatus": function (key, event) {
-                    if (event.type !== tba.eventKey) throw "Expected an event key.";
-                    return this.apiRequest(["team", key, "event", event, "status"].join("/"));
-                }.bind(this, key),
-                "awards": function (key) {
-                    return this.apiRequest(["team", key, "awards"].join("/"));
-                }.bind(this, key),
-                "awardsInYear": function (key, year) {
-                    if (year.type !== tba.year) throw "Expected a year.";
-                    return this.apiRequest(["team", key, "awards", year.toString()].join("/"));
-                }.bind(this, key),
-                "matchesInYear": function (key, year) {
-                    if (year.type !== tba.year) throw "Expected a year.";
-                    return this.apiRequest(["team", key, "matches", year.toString()].join("/"));
-                }.bind(this, key),
-                "simpleMatchesInYear": function (key, year) {
-                    if (year.type !== tba.year) throw "Expected a year.";
-                    return this.apiRequest(["team", key, "matches", year.toString(), "simple"].join("/"));
-                }.bind(this, key),
-                "matchKeysInYear": function (key, year) {
-                    if (year.type !== tba.year) throw "Expected a year.";
-                    return this.apiRequest(["team", key, "matches", year.toString(), "keys"].join("/"));
-                }.bind(this, key),
-                /*"mediaInYear": function (key, year) {
-                    if (year.constructor !== tba.year) throw "Expected a year.";
-                    return this.apiRequest(["team", key, "media", year.toString()].join("/"));
-                }.bind(this, key),
-                "mediaByTag": function (key, media) {
-    
-                }.bind(this, key),
-                "mediaByTagInYear": function (key, media, year) {}.bind(this, key),
-                "socialMedia": function (key) {
-                    return this.apiRequest(["team", key, "social_media"].join("/"));
-                }.bind(this, key)
-            }
-        } */
     };
 
     for (var funcName in selfFns) {
@@ -1466,6 +1306,14 @@ tba.districtKey = function (key) {
     str.type = tba.districtKey;
     return str;
 };
+tba.matchKey = function (key) {
+    if (!tba.isMatchKey(key)) {
+        throw "Invalid event key";
+    }
+    var str = new String(key);
+    str.type = tba.matchKey;
+    return str;
+};
 tba.pageNumber = function (num) {
     if (!tba.isPageNum(num)) {
         throw "Invalid page number";
@@ -1497,7 +1345,7 @@ tba.isTeamKey = function (id) {
 };
 tba.isYear = function (year) {
     // Check that the value is a number, an integer (non floating point), and in the range new 1992 - current year
-    return (typeof year === "number") && ((year | 0) === year) && (year >= 1992 && year <= (new Date()).getFullYear());
+    return (typeof year === "number") && ((year | 0) === year) && (year >= 1992 && year <= (new Date()).getFullYear()+1);
 };
 tba.isPageNum = function (num) {
     // Check that the value is a number, an integer, and greater than or equal to 0
@@ -1508,4 +1356,7 @@ tba.isDistrictKey = function (id) {
 };
 tba.isEventKey = function (id) {
     return (typeof id === "string") && (/^[0-9]{4}[a-z]+$/i.test(id));
+};
+tba.isMatchKey = function (id) {
+  return (typeof id === "string") && (/^[0-9]{4}[a-z]+\_(qm|ef|qf|sf|f)[0-9]+$/.test(id));
 };
