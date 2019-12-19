@@ -1360,3 +1360,24 @@ tba.isEventKey = function (id) {
 tba.isMatchKey = function (id) {
   return (typeof id === "string") && (/^[0-9]{4}[a-z]+\_(qm|ef|qf|sf|f)[0-9]+$/.test(id));
 };
+
+function flattenObj(obj, out, header) {
+  if (typeof out === "undefined") out = {};
+  if (typeof header === "undefined") header = "";
+  if (typeof obj !== "object") {
+    out[header] = obj;
+  } else {
+    for (var key in obj) {
+      if (Array.isArray(obj[key])) {
+        flattenObj(obj[key], out, header + key + ".");
+      } else if (typeof obj[key] === "object") {
+        flattenObj(obj[key], out, header + key + ".");
+      } else {
+        out[header + key] = obj[key];
+      }
+    }
+  }
+  return out;
+}
+
+

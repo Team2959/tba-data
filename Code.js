@@ -1,4 +1,4 @@
-var TBA = new tba("Krm8Gg4CDQHpCk8Dg7pJLXkqP77YQNkauQoawhSE5wZyBfGEb6iltLn7W12c6hWV");
+var TBA = new tba("YOUR API KEY HERE");
 /*************************************************************************************/
 //  defining arrays of headers to be used in queries
 
@@ -271,11 +271,9 @@ function makeFunctionBuilderCall(thisBtnRow)
   {
     // if the outputSheet is currently blank, then have the header row
     // include every key possible.  
-    var headerRow = [];
-    for (var key in ourData[0]) {
-      headerRow.push(key);
-    }
+    var headerRow = null;
   }
+  
   Logger.log (headerRow);
   if(data_is_kvps)
   {
@@ -283,7 +281,7 @@ function makeFunctionBuilderCall(thisBtnRow)
     var sheetData = createTable(headerRow, ourData, true);
     Logger.log (sheetData);
     outputSheet.clear();  // This deletes everything 
-    outputSheet.getRange(1,1,sheetData.length,headerRow.length).setValues(sheetData);  
+    outputSheet.getRange(1,1,sheetData.length,sheetData[0].length).setValues(sheetData);  
   }
   else
   {
@@ -329,16 +327,36 @@ function showInvalidParameters() {
 
 
 
-function createTable (headers, data, includeHeaders){
+function createTable (headers, data, includeHeaders) {
+  var headersProvided = false;
+  if (headers === null) {
+    headers =[];
+  } else {
+    headersProvided = true;
+  }
+  
+  if (!headersProvided) {
+    var hObj = {};
+    data.forEach(function (v) {
+      var flat = flattenObj(v);
+      for (var key in flat) {
+        hObj[key] = true;  
+      }
+    });
+    for (var key in hObj) {
+      headers.push(key);  
+    }
+  }
+  
   var result = data.map(function (v) {
+    var flat = flattenObj(v);
     return headers.map(function (w) {
-      return v[w];
+      return flat[w];
     });
   });
   if (includeHeaders) {
     result.unshift(headers);
   }
-  
   return result;
 }
 
